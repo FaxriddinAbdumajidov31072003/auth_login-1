@@ -10,10 +10,16 @@
     		<key>CFBundleURLSchemes</key>
     		<array>
     			<string>com.googleusercontent.apps.65800052698-v9hvukur7h478p0o60nbr11t5domu41m</string>
+    			 <string>fb1105567196806098</string>
     		</array>
     	</dict>
     </array>
-
+<key>FacebookAppID</key>
+    <string>1105567196806098</string>
+    <key>FacebookClientToken</key>
+    <string>556938cdda557af98dd974fca5d31f34</string>
+    <key>FacebookDisplayName</key>
+    <string>Test test</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

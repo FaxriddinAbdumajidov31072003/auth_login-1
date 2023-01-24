@@ -13,6 +13,7 @@ class VerfPage extends StatefulWidget {
 
 class _VerfPageState extends State<VerfPage> {
   TextEditingController controller = TextEditingController();
+  String? error;
 
   @override
   Widget build(BuildContext context) {
@@ -46,17 +47,21 @@ class _VerfPageState extends State<VerfPage> {
           ElevatedButton(
               onPressed: () async {
                 try {
+                  FirebaseAuth auth = FirebaseAuth.instance;
+
                   PhoneAuthCredential credential = PhoneAuthProvider.credential(
                       verificationId: widget.id, smsCode: controller.text);
-                  print(credential.accessToken);
-                  print(credential.smsCode);
-                  print(credential.signInMethod);
+                  var data = await auth.signInWithCredential(credential);
+                  print(data.additionalUserInfo?.isNewUser);
                 } catch (e) {
                   print(e);
+                  error = e.toString();
+                  setState(() {});
                 }
                 // Create a PhoneAuthCredential with the code
               },
-              child: Text("Check"))
+              child: Text("Check")),
+          Text(error ?? "")
         ],
       ),
     );

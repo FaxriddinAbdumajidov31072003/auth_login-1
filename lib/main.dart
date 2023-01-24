@@ -1,8 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'add_number.dart';
+import 'get_chats.dart';
+import 'get_info.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const AddNumber(),
+      home: GetChats(),
     );
   }
 }
@@ -44,6 +47,20 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _counter++;
     });
+  }
+
+  Future<void> getInfo() async {
+    final fb = FacebookLogin();
+    debugPrint('===> login with23 face exceptio');
+    try {
+      final user = await fb.logIn();
+      print(user.status.toString());
+    } catch (e) {
+      print("e");
+      print(e);
+    }
+
+
   }
 
   @override
@@ -83,9 +100,12 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: const Text("Google sign"),
             ),
-            avatar == null ? SizedBox.shrink() : Image.network(avatar ?? ""),
-            name == null ? SizedBox.shrink() : Text(name ?? ""),
-            email == null ? SizedBox.shrink() : Text(email ?? ""),
+            ElevatedButton(
+                onPressed: () {
+                  print("object");
+                  getInfo();
+                },
+                child: Text("Facebook"))
           ],
         ),
       ),
