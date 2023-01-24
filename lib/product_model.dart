@@ -11,4 +11,8 @@ class ProductModel {
     return ProductModel(
         name: data["name"], desc: data["desc"], price: data["price"]);
   }
+
+  toJson() {
+    return {"name": name, "desc": desc, "price": price};
+  }
 }
