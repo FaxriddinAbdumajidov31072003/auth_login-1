@@ -22,7 +22,7 @@ class _GetProductPageState extends State<GetProductPage> {
         title: Text('Products'),
       ),
       body: FutureBuilder(
-        future: fireStore.collection("product").get(),
+        future: fireStore.collection("product").where("name",isEqualTo: "mac").get(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
             list.clear();
