@@ -23,15 +23,17 @@ class _GetProductPageState extends State<GetProductPage> {
     if(text == null){
       data = await fireStore.collection("product").get();
     }else{
+
       data = await fireStore
           .collection("product")
           .orderBy("name")
           .startAt([text.toLowerCase()]).endAt(["${text.toLowerCase()}\uf8ff"]).get();
     }
+    print( data?.docs.length);
     list.clear();
-    data?.docs.forEach((element) {
+    for (var element in data?.docs ?? []) {
       list.add(ProductModel.fromJson(element));
-    });
+    }
     isLoading = false;
     setState(() {});
   }
@@ -73,6 +75,7 @@ class _GetProductPageState extends State<GetProductPage> {
                         ),
                         child: Column(
                           children: [
+                            Image.network(list[index].image ?? ""),
                             Text("${list[index].name.substring(0, 1).toUpperCase()}${list[index].name.substring(1)}"),
                             Text(list[index].desc),
                             Text(list[index].price.toString()),
