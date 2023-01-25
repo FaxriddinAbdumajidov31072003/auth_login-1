@@ -26,7 +26,7 @@ class _GetProductPageState extends State<GetProductPage> {
       data = await fireStore
           .collection("product")
           .orderBy("name")
-          .startAt([text]).endAt(["$text\uf8ff"]).get();
+          .startAt([text.toLowerCase()]).endAt(["${text.toLowerCase()}\uf8ff"]).get();
     }
     list.clear();
     data?.docs.forEach((element) {
@@ -61,24 +61,26 @@ class _GetProductPageState extends State<GetProductPage> {
           ),
           isLoading
               ? CircularProgressIndicator()
-              : ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: list.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                      ),
-                      child: Column(
-                        children: [
-                          Text(list[index].name),
-                          Text(list[index].desc),
-                          Text(list[index].price.toString()),
-                        ],
-                      ),
-                    );
-                  })
+              : Expanded(
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: list.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                        ),
+                        child: Column(
+                          children: [
+                            Text("${list[index].name.substring(0, 1).toUpperCase()}${list[index].name.substring(1)}"),
+                            Text(list[index].desc),
+                            Text(list[index].price.toString()),
+                          ],
+                        ),
+                      );
+                    }),
+              )
         ],
       ),
       floatingActionButton: FloatingActionButton(

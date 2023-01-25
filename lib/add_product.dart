@@ -47,7 +47,7 @@ class _AddProductPageState extends State<AddProductPage> {
                   firestore
                       .collection("product")
                       .add(ProductModel(
-                      name: nameController.text,
+                      name: nameController.text.toLowerCase(),
                       desc: descController.text,
                       price: double.tryParse(priceController.text) ?? 0)
                       .toJson())
