@@ -96,6 +96,22 @@ class _GetProductPageState extends State<GetProductPage> {
                                               "Error updating document $e"),
                                         );
                                     list.removeAt(index);
+                                    data?.docs.removeAt(index);
+                                    //c: 6
+                                    //d: 6
+                                    //l: 6
+
+                                    // firebase delete
+                                    // list remove
+
+                                    //c: 5
+                                    //d: 5
+                                    //l: 5
+
+                                    // firebase delete
+                                    // list remove
+
+
                                     setState(() {});
                                   },
                                   icon: const Icon(Icons.delete))
