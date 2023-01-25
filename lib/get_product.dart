@@ -20,16 +20,12 @@ class _GetProductPageState extends State<GetProductPage> {
   Future<void> getInfo({String? text}) async {
     isLoading = true;
     setState(() {});
-    if(text == null){
+    if (text == null) {
       data = await fireStore.collection("product").get();
-    }else{
-
-      data = await fireStore
-          .collection("product")
-          .orderBy("name")
-          .startAt([text.toLowerCase()]).endAt(["${text.toLowerCase()}\uf8ff"]).get();
+    } else {
+      data = await fireStore.collection("product").orderBy("name").startAt(
+          [text.toLowerCase()]).endAt(["${text.toLowerCase()}\uf8ff"]).get();
     }
-    print( data?.docs.length);
     list.clear();
     for (var element in data?.docs ?? []) {
       list.add(ProductModel.fromJson(element));
@@ -56,7 +52,7 @@ class _GetProductPageState extends State<GetProductPage> {
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
               decoration: InputDecoration(labelText: "Search"),
-              onChanged: (s){
+              onChanged: (s) {
                 getInfo(text: s);
               },
             ),
@@ -64,26 +60,50 @@ class _GetProductPageState extends State<GetProductPage> {
           isLoading
               ? CircularProgressIndicator()
               : Expanded(
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: list.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: EdgeInsets.only(bottom: 10),
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                        ),
-                        child: Column(
-                          children: [
-                            Image.network(list[index].image ?? ""),
-                            Text("${list[index].name.substring(0, 1).toUpperCase()}${list[index].name.substring(1)}"),
-                            Text(list[index].desc),
-                            Text(list[index].price.toString()),
-                          ],
-                        ),
-                      );
-                    }),
-              )
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: list.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                          ),
+                          child: Row(
+                            children: [
+                              Column(
+                                children: [
+                                  SizedBox(
+                                      child: Image.network(list[index].image ?? ""),
+                                  height: 50,
+                                    width: 50,
+                                  ),
+                                  Text(
+                                      "${list[index].name.substring(0, 1).toUpperCase()}${list[index].name.substring(1)}"),
+                                  Text(list[index].desc),
+                                  Text(list[index].price.toString()),
+                                ],
+                              ),
+                              IconButton(
+                                  onPressed: () {
+                                    fireStore
+                                        .collection("product")
+                                        .doc(data?.docs[index].id ?? "")
+                                        .delete()
+                                        .then(
+                                          (doc) => print("Document deleted"),
+                                          onError: (e) => print(
+                                              "Error updating document $e"),
+                                        );
+                                    list.removeAt(index);
+                                    setState(() {});
+                                  },
+                                  icon: const Icon(Icons.delete))
+                            ],
+                          ),
+                        );
+                      }),
+                )
         ],
       ),
       floatingActionButton: FloatingActionButton(
