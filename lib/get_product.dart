@@ -14,6 +14,7 @@ class GetProductPage extends StatefulWidget {
 class _GetProductPageState extends State<GetProductPage> {
   final FirebaseFirestore fireStore = FirebaseFirestore.instance;
   List<ProductModel> list = [];
+  List listOfDoc = [];
   QuerySnapshot? data;
   bool isLoading = true;
 
@@ -27,8 +28,10 @@ class _GetProductPageState extends State<GetProductPage> {
           [text.toLowerCase()]).endAt(["${text.toLowerCase()}\uf8ff"]).get();
     }
     list.clear();
-    for (var element in data?.docs ?? []) {
+    listOfDoc.clear();
+    for (QueryDocumentSnapshot element in data?.docs ?? []) {
       list.add(ProductModel.fromJson(element));
+      listOfDoc.add(element.id);
     }
     isLoading = false;
     setState(() {});
@@ -86,9 +89,11 @@ class _GetProductPageState extends State<GetProductPage> {
                               ),
                               IconButton(
                                   onPressed: () {
+                                    print(list.length);
+                                    print(listOfDoc.length);
                                     fireStore
                                         .collection("product")
-                                        .doc(data?.docs[index].id ?? "")
+                                        .doc(listOfDoc[index])
                                         .delete()
                                         .then(
                                           (doc) => print("Document deleted"),
@@ -96,12 +101,15 @@ class _GetProductPageState extends State<GetProductPage> {
                                               "Error updating document $e"),
                                         );
                                     list.removeAt(index);
-                                    data?.docs.removeAt(index);
-                                    //c: 6
-                                    //d: 6
-                                    //l: 6
+                                    listOfDoc.removeAt(index);
+                                    print(list.length);
+                                    print(listOfDoc.length);
+                                    //cloud firebase: 6
+                                    //data: 6
+                                    //list: 6
 
                                     // firebase delete
+                                    // data remove
                                     // list remove
 
                                     //c: 5
@@ -109,6 +117,7 @@ class _GetProductPageState extends State<GetProductPage> {
                                     //l: 5
 
                                     // firebase delete
+                                    // data remove
                                     // list remove
 
 
