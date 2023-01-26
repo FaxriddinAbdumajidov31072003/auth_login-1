@@ -1,3 +1,4 @@
+import 'package:auth_login/dynamic_link.dart';
 import 'package:auth_login/product_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -32,9 +33,9 @@ class _GetProductPageState extends State<GetProductPage> {
       sound: true,
     );
 
-    FirebaseMessaging.onBackgroundMessage((RemoteMessage message) async {
-      print("onBackgroundMessage");
-    });
+    // FirebaseMessaging.onBackgroundMessage((RemoteMessage message) async {
+    //   print("onBackgroundMessage");
+    // });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print("onMessageOpenedApp");
@@ -104,8 +105,9 @@ class _GetProductPageState extends State<GetProductPage> {
                               Column(
                                 children: [
                                   SizedBox(
-                                      child: Image.network(list[index].image ?? ""),
-                                  height: 50,
+                                    child:
+                                        Image.network(list[index].image ?? ""),
+                                    height: 50,
                                     width: 50,
                                   ),
                                   Text(
@@ -147,7 +149,6 @@ class _GetProductPageState extends State<GetProductPage> {
                                     // data remove
                                     // list remove
 
-
                                     setState(() {});
                                   },
                                   icon: const Icon(Icons.delete))
@@ -158,12 +159,24 @@ class _GetProductPageState extends State<GetProductPage> {
                 )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (_) => const AddProductPage()));
-        },
-        child: const Icon(Icons.add),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Row(
+        children: [
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const DynamicLinkPage()));
+            },
+            child: const Icon(Icons.link),
+          ),
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const AddProductPage()));
+            },
+            child: const Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }
