@@ -1,5 +1,6 @@
 import 'package:auth_login/product_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'add_product.dart';
@@ -19,6 +20,32 @@ class _GetProductPageState extends State<GetProductPage> {
   bool isLoading = true;
 
   Future<void> getInfo({String? text}) async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    FirebaseMessaging.onBackgroundMessage((RemoteMessage message) async {
+      print("onBackgroundMessage");
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print("onMessageOpenedApp");
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print("onMessage");
+    });
+
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    print("fcm: $fcmToken");
     isLoading = true;
     setState(() {});
     if (text == null) {
