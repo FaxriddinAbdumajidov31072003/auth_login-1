@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'add_number.dart';
 import 'chats_page.dart';
 import 'get_product.dart';
+import 'get_text.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const ChatsPage(),
+      home: const GetText(),
     );
   }
 }

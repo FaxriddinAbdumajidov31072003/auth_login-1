@@ -86,6 +86,7 @@ class _ChatsPageState extends State<ChatsPage> {
                 "resender": sender!.toJson(),
                 "mess": List<dynamic>.from(messages.map((x) => x.toJson()))
               });
+              textEditingController.clear();
             },
             icon: Icon(Icons.send),
           ),
