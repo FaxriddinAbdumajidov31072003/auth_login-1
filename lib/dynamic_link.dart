@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:http/http.dart' as http;
@@ -17,9 +16,9 @@ class _DynamicLinkPageState extends State<DynamicLinkPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Dynamic Link"),
+        title: const Text("Dynamic Link"),
       ),
-      body: Center(
+      body: const Center(
         child: Text("Genetare link"),
       ),
       floatingActionButton: FloatingActionButton(

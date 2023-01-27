@@ -13,7 +13,7 @@ class ProductModel {
     required this.image,
   });
 
-  factory ProductModel.fromJson(QueryDocumentSnapshot data) {
+  factory ProductModel.fromJson(dynamic data) {
     return ProductModel(
         name: data["name"],
         desc: data["desc"],

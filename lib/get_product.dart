@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:auth_login/dynamic_link.dart';
 import 'package:auth_login/product_model.dart';
+import 'package:auth_login/product_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_share/flutter_share.dart';
+import 'package:http/http.dart' as http;
 import 'add_product.dart';
 
 class GetProductPage extends StatefulWidget {
@@ -15,10 +20,42 @@ class GetProductPage extends StatefulWidget {
 
 class _GetProductPageState extends State<GetProductPage> {
   final FirebaseFirestore fireStore = FirebaseFirestore.instance;
+  final FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
   List<ProductModel> list = [];
   List listOfDoc = [];
   QuerySnapshot? data;
   bool isLoading = true;
+
+  Future<void> initDynamicLinks() async {
+    dynamicLinks.onLink.listen((dynamicLinkData) {
+      print(dynamicLinkData);
+      print(dynamicLinkData.link);
+      print(dynamicLinkData.link
+          .toString()
+          .substring(dynamicLinkData.link.toString().lastIndexOf("/")+1));
+      String docId = dynamicLinkData.link
+          .toString()
+          .substring(dynamicLinkData.link.toString().lastIndexOf("/")+1);
+      Navigator.push(context, MaterialPageRoute(builder: (_)=>ProductPage(docId: docId,)));
+    }).onError((error) {
+      debugPrint(error.message);
+    });
+
+    final PendingDynamicLinkData? data =
+        await FirebaseDynamicLinks.instance.getInitialLink();
+    final Uri? deepLink = data?.link;
+
+    if (deepLink != null) {
+      print(deepLink
+          .toString()
+          .substring(deepLink.toString().lastIndexOf("/")+1));
+      String docId = deepLink
+          .toString()
+          .substring(deepLink.toString().lastIndexOf("/")+1);
+      // ignore: use_build_context_synchronously
+      Navigator.push(context, MaterialPageRoute(builder: (_)=>ProductPage(docId: docId,)));
+    }
+  }
 
   Future<void> getInfo({String? text}) async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -68,6 +105,7 @@ class _GetProductPageState extends State<GetProductPage> {
   @override
   void initState() {
     getInfo();
+    initDynamicLinks();
     super.initState();
   }
 
@@ -95,64 +133,120 @@ class _GetProductPageState extends State<GetProductPage> {
                       shrinkWrap: true,
                       itemCount: list.length,
                       itemBuilder: (context, index) {
-                        return Container(
-                          margin: EdgeInsets.only(bottom: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                          ),
-                          child: Row(
-                            children: [
-                              Column(
-                                children: [
-                                  SizedBox(
-                                    child:
-                                        Image.network(list[index].image ?? ""),
-                                    height: 50,
-                                    width: 50,
-                                  ),
-                                  Text(
-                                      "${list[index].name.substring(0, 1).toUpperCase()}${list[index].name.substring(1)}"),
-                                  Text(list[index].desc),
-                                  Text(list[index].price.toString()),
-                                ],
-                              ),
-                              IconButton(
-                                  onPressed: () {
-                                    print(list.length);
-                                    print(listOfDoc.length);
-                                    fireStore
-                                        .collection("product")
-                                        .doc(listOfDoc[index])
-                                        .delete()
-                                        .then(
-                                          (doc) => print("Document deleted"),
-                                          onError: (e) => print(
-                                              "Error updating document $e"),
-                                        );
-                                    list.removeAt(index);
-                                    listOfDoc.removeAt(index);
-                                    print(list.length);
-                                    print(listOfDoc.length);
-                                    //cloud firebase: 6
-                                    //data: 6
-                                    //list: 6
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) =>
+                                        ProductPage(product: list[index])));
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                            ),
+                            child: Row(
+                              children: [
+                                Column(
+                                  children: [
+                                    SizedBox(
+                                      child: Image.network(
+                                          list[index].image ?? ""),
+                                      height: 50,
+                                      width: 50,
+                                    ),
+                                    Text(
+                                        "${list[index].name.substring(0, 1).toUpperCase()}${list[index].name.substring(1)}"),
+                                    Text(list[index].desc),
+                                    Text(list[index].price.toString()),
+                                  ],
+                                ),
+                                IconButton(
+                                    onPressed: () {
+                                      print(list.length);
+                                      print(listOfDoc.length);
+                                      fireStore
+                                          .collection("product")
+                                          .doc(listOfDoc[index])
+                                          .delete()
+                                          .then(
+                                            (doc) => print("Document deleted"),
+                                            onError: (e) => print(
+                                                "Error updating document $e"),
+                                          );
+                                      list.removeAt(index);
+                                      listOfDoc.removeAt(index);
+                                      print(list.length);
+                                      print(listOfDoc.length);
+                                      //cloud firebase: 6
+                                      //data: 6
+                                      //list: 6
 
-                                    // firebase delete
-                                    // data remove
-                                    // list remove
+                                      // firebase delete
+                                      // data remove
+                                      // list remove
 
-                                    //c: 5
-                                    //d: 5
-                                    //l: 5
+                                      //c: 5
+                                      //d: 5
+                                      //l: 5
 
-                                    // firebase delete
-                                    // data remove
-                                    // list remove
+                                      // firebase delete
+                                      // data remove
+                                      // list remove
 
-                                    setState(() {});
-                                  },
-                                  icon: const Icon(Icons.delete))
-                            ],
+                                      setState(() {});
+                                    },
+                                    icon: const Icon(Icons.delete)),
+                                IconButton(
+                                    onPressed: () async {
+                                      var productLink =
+                                          'https://foodyman.org/${listOfDoc[index]}';
+
+                                      const dynamicLink =
+                                          'https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyD3iHcYYpc-dzP5WHizXdbsOqIiiLMBKbI';
+
+                                      final dataShare = {
+                                        "dynamicLinkInfo": {
+                                          "domainUriPrefix":
+                                              'https://lessonnt.page.link',
+                                          "link": productLink,
+                                          "androidInfo": {
+                                            "androidPackageName":
+                                                'com.example.auth_login',
+                                          },
+                                          "iosInfo": {
+                                            "iosBundleId":
+                                                "org.foodyman.customer",
+                                          },
+                                          "socialMetaTagInfo": {
+                                            "socialTitle": list[index].name,
+                                            "socialDescription":
+                                                "Description: ${list[index].desc}",
+                                            "socialImageLink":
+                                                "${list[index].image}",
+                                          }
+                                        }
+                                      };
+
+                                      final res = await http.post(
+                                          Uri.parse(dynamicLink),
+                                          body: jsonEncode(dataShare));
+
+                                      var shareLink =
+                                          jsonDecode(res.body)['shortLink'];
+                                      await FlutterShare.share(
+                                        text: list[index].name,
+                                        title:
+                                            "Description: ${list[index].desc}",
+                                        linkUrl: shareLink,
+                                      );
+
+                                      print(shareLink);
+                                    },
+                                    icon: const Icon(Icons.share))
+                              ],
+                            ),
                           ),
                         );
                       }),
